@@ -1,0 +1,97 @@
+<# 
+.DESCRIPTION
+   Report_Snapshots.ps1 es un script que nos reporta información sobre los snapshots en una infraestructura vSphere 5.x
+
+.NOTES 
+   File Name  : Report_Snapshots.ps1 
+   Author     : Miquel Mariano - @miquelMariano (reference: https://communities.vmware.com/thread/475936)
+   Version    : 2
+   
+      
+.CHANGELOG
+   v1	13/06/2014	Creación del script
+   v2	22/05/2015	Securizar script medienta función get-credentials
+   
+#>
+
+#-------------------------VARIABLES GLOBALES----------------------
+$vCenterServer = "vcenter.logitravelzone.local"
+$vCenterUsername = "scriptsuser"
+$PathToCredentials = "."
+$PathToReport = "L:\Producto\Scripts\Report_Snapshots\Reports"
+$To = @("miquel.mariano@ncora.com")
+$From = "vCenter@logitravelzone.local"
+$SMTPServer = "172.29.106.36"
+#-------------------------VARIABLES GLOBALES----------------------
+
+
+#-------------------------FUNCIÓN PARA ENCRIPTAR LA CONTRASEÑA----------------------
+#Debe cambiar estos valores para guardar de forma segura tus archivos de credenciales
+$Key = [byte]29,36,18,22,72,33,85,52,73,44,14,21,98,76,18,28
+
+Function Get-Credentials {
+    Param (
+	    [String]$AuthUser = $env:USERNAME,
+        [string]$PathToCred
+    )
+
+    #Build the path to the credential file
+    $CredFile = $AuthUser.Replace("\","~")
+    $File = $PathToCred + "\Credentials-$CredFile.crd"
+	#And find out if it's there, if not create it
+    If (-not (Test-Path $File))
+	{	(Get-Credential $AuthUser).Password | ConvertFrom-SecureString -Key $Key | Set-Content $File
+    }
+	#Load the credential file 
+    $Password = Get-Content $File | ConvertTo-SecureString -Key $Key
+    $AuthUser = (Split-Path $File -Leaf).Substring(12).Replace("~","\")
+    $AuthUser = $AuthUser.Substring(0,$AuthUser.Length - 4)
+	$Credential = New-Object System.Management.Automation.PsCredential($AuthUser,$Password)
+    Return $Credential
+}
+#-------------------------FUNCIÓN PARA ENCRIPTAR LA CONTRASEÑA----------------------
+
+If (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
+{   Try { Add-PSSnapin VMware.VimAutomation.Core -ErrorAction Stop }
+    Catch { Write-Host "Unable to load PowerCLI, is it installed?" -ForegroundColor Red; Exit }
+}
+
+$Cred = Get-Credentials $vCenterUsername $PathToCredentials
+
+Connect-VIServer $vCenterServer -Credential $Cred -ErrorAction Stop | Out-Null
+
+$Header = @"
+<style>
+TABLE {border-width: 1px;border-style: solid;border-color: black;border-collapse: collapse;}
+TH {border-width: 1px;padding: 3px;border-style: solid;border-color: black;background-color: #6495ED;}
+TD {border-width: 1px;padding: 3px;border-style: solid;border-color: black;}
+</style>
+"@
+
+$Report = Get-VM | Get-Snapshot | Select VM,Name,Description,@{Label="Size";Expression={"{0:N2} GB" -f ($_.SizeMB / 1024)}},Created,@{Label="Days Old";Expression={(New-TimeSpan -End (Get-Date) -Start $_.Created).Days}} | sort -descending -Property "Days Old"
+If (-not $Report)
+{   $Report = New-Object PSObject -Property @{
+        VM = "No snapshots found on any VM's controlled by $vCenterServer"
+        Name = ""
+        Description = ""
+        Size = ""
+        Created = ""
+        'Days Old' = ""
+    }
+}
+$Report = $Report | 
+    Select VM,Name,Description,Size,Created,'Days Old' | 
+    ConvertTo-Html -Head $Header -PreContent "<p><h2>Snapshot Report:  $vCenterServer</h2></p><br>" 
+
+
+#Genera Report en HTML
+$now = Get-Date -format "dd-MMM-yyyy_HH-mm"
+$Report | Out-File $PathToReport\Report_$vCenterServer-$now.html
+
+#Envia report por correo
+$emailBody = @"
+$Report
+$now
+"@
+
+Send-MailMessage -To $To -From $From -Subject "Report Snapshots Caja+" -Body $emailBody -BodyAsHtml -SmtpServer $SMTPServer
