@@ -1,6 +1,0 @@
-cache:
-  redis:
-    master: 
-    hosts: 
-    host: sa3aci04.env 
-    port: 6379

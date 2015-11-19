@@ -1,6 +1,0 @@
-caronte:
-  client-type: rest
-  url: http://we3mpf01.hotelbeds:4092/caronte-web/int
-  fake: INT
-defaults:
-  limitAvailCarontePetition: 1500

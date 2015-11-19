@@ -1,8 +1,0 @@
-esb:
-  zeromq:
-    servers:
-    - port: 4444
-      type: STANDALONE
-      service: HOTEL_API_SEARCH
-      version: V_1
-      address: tcp://*

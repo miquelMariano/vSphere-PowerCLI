@@ -1,6 +1,0 @@
-mashery:
-  api:
-    url: http://api.mashery.com/v2/json-rpc
-    masheryV2ApiKey: qgrbqrdgwa369dp5hjmnxgpx
-    masheryV2ApiSecret: T4vqdCStsx
-    siteIdFromDashboard: 1002

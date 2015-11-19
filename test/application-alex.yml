@@ -1,8 +1,0 @@
-cache:
-  defaultTtoo: 
-  defaultBranch: 
-  defaultInterface: 
-  redis:
-    master: hotel-api-test
-    hosts: sa3aci04.env:26379
-    timeout: 20000
