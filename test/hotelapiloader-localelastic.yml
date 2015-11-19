@@ -1,0 +1,5 @@
+elasticsearch:
+  address: localhost
+  port: 9300
+  clusterName: elasticsearch
+    

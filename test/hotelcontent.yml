@@ -1,0 +1,40 @@
+dozer:
+  configuration:
+    file: /dozer/request-mapping.xml
+spring:
+  application:
+    name: HotelContent
+info:
+  app:
+    name: Hotel Content Web Service 2.0
+    description: Hotel Content Web Service 2.0 REST Service
+    version: 1.0.0
+cluster:
+  hotelapi:
+    port: 3807
+concurrency:
+    top: 8
+index:
+  indexName: hotels
+  hotelDocumentType: hotel
+  zoneDocumentType: zone
+  destinationDocumentType: destination
+  updateIndexes: false
+  haltOnIndexVerification: true
+elastic:
+    clusterName: elasticsearch-hotel-content
+    embedded: false
+    transport: false
+    transportAddress: hotel-search01.test.env
+    transportPort: 9300
+    restPort: 9200
+    client-type: rest
+esb:
+  zeromq:
+    clients[0]:
+      service: HOTEL_API_SEARCH
+      version: V_1
+      address: tcp://${esb.router}
+      port: 9004
+  search:
+    protocol_version: LAST_UPDATE 

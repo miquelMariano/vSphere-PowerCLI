@@ -1,0 +1,3 @@
+messaging:
+  queueName: esb.queue.hotel-api.hotel-api-loader.andres
+  topicName: topic.sample

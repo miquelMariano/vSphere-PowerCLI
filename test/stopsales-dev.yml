@@ -1,0 +1,18 @@
+spring:
+  profiles: dev
+  cloud:
+    config:
+      uri: http://config-server.test.service:8888
+  datasources:
+    atlas:
+      jdbcUrl: jdbc:oracle:thin:@bdatltest.hotelbeds:1521/atltest
+      driverClassName: oracle.jdbc.OracleDriver
+      username: recep
+      password: recep
+      maximumPoolSize: 5
+    scheduling:
+      jdbcUrl: jdbc:oracle:thin:@bdatltest.hotelbeds:1521/atltest
+      driverClassName: oracle.jdbc.OracleDriver
+      username: tkin
+      password: tkin
+      maximumPoolSize: 2

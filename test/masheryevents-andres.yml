@@ -1,0 +1,3 @@
+mashery:
+  events:
+    forwardUrls: https://apps.test.hotelbeds.com/mashery-events,https://hotelbedshome.secure.force.com/mashery/services/apexrest/mashery

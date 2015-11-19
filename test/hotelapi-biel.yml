@@ -1,0 +1,33 @@
+esb:
+  zeromq:
+    clients[0]:
+      service: AVAILABILITY
+      version: V_1
+      address: tcp://sa3act02.hotelbeds
+      port: 9001
+    clients[1]:
+      service: HOTELSEARCH
+      version: V_1
+      address: tcp://sa3act02.hotelbeds
+      port: 9300
+    clients[2]:
+      service: EXTERNAL_AVAILABILITY
+      version: V_1
+      address: tcp://sa3act02.hotelbeds
+      port: 9003
+    clients[3]:
+      service: HOTEL_API_SEARCH
+      version: V_1
+      address: tcp://sa3act02.hotelbeds
+      port: 9004
+  caronte:
+    availability:
+      url: http://10.162.2.145:4092/caronte-web
+defaults:
+  apiKey: csn9jjx97fbzfxxbrtm4wq6g
+  priceTypeTtoos: L-5whau6xxgafuh65utzcquf8s,N-8883j4wqaa6n6rapw9yjbwau,C-74h85nxk8e3k27anmhcb7xbc,D-7e6tt5yet55wckxwaxanrzvd
+  provider:
+    disabled:
+      caronte: false
+caronte:
+  client-type: usb      

@@ -1,0 +1,13 @@
+cluster:
+  hotelapi:
+    port: 3806
+messaging:
+  queueName: esb.queue.hotel-api.hotel-api-loader${messaging.suffix}
+  topicName: topic.sample
+periodic_reload:
+  cronExpression: 0 0 0 * * ? *
+periodic_apikeys_reload:
+  cronExpression: 0 * * * * ? *
+elasticsearch:
+  batchSize: 10000
+  numHotelsReindex: 700

@@ -1,0 +1,7 @@
+cluster:
+  hotelapi:
+    disabled-persistence: D:/Caches
+cache:
+  redis:
+    master: hotel-api-test
+    hosts: sa3aci04.env:26379

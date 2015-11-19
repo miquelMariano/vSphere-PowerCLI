@@ -1,0 +1,36 @@
+esb:
+  zeromq:
+    clients[0]:
+      service: AVAILABILITY
+      version: V_1
+      address: tcp://sa3act02.hotelbeds
+      port: 9001
+    clients[1]:
+      service: HOTELSEARCH
+      version: V_1
+      address: tcp://sa3act02.hotelbeds
+      port: 9300
+    clients[2]:
+      service: EXTERNAL_AVAILABILITY
+      version: V_1
+      address: tcp://sa3act02.hotelbeds
+      port: 9003
+    clients[3]:
+      service: HOTEL_API_SEARCH
+      version: V_1
+      address: tcp://localhost
+      port: 4444
+  availability:
+    version: V_1
+    timeoutUnits: SECONDS
+    concurrency: 50
+    timeout: 20
+  caronte:
+    availability:
+      url: http://10.162.2.145:4092/caronte-web/test/
+  search:
+    protocol_version: LAST_UPDATE
+defaults:
+  provider:
+    disabled:
+      caronte: true

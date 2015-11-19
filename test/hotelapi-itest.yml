@@ -1,0 +1,33 @@
+concurrency:
+  max:
+    load:
+      combined: 3000
+defaults:
+  apiKey: zffxus8c7rzfabxp8rgkgt27
+  provider:
+    disabled:
+      caronte: true
+esb:
+  zeromq:
+   clients[0]:
+      service: AVAILABILITY
+      version: V_1
+      address: tcp://${esb.router}
+      port: 9001
+   clients[1]:
+      service: HOTELSEARCH
+      version: V_1
+      address: tcp://${esb.router}
+      port: 9300
+   clients[2]:
+      service: EXTERNAL_AVAILABILITY
+      version: V_1
+      address: tcp://sa3zmi01.env
+      port: 9003
+   clients[3]:
+      service: HOTEL_API_SEARCH
+      version: V_1
+      address: tcp://${esb.router}
+      port: 9004
+  search:
+    protocol_version: LAST_UPDATE
