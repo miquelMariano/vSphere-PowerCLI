@@ -70,7 +70,7 @@ $Cred = Get-Credentials $vCenterUser $PathToCredentials
 Connect-VIServer $vCenter -Credential $Cred -ErrorAction Stop | Out-Null
 
 # Define the Update DRS rule function
-#
+
 function DRSrule {
 param (
     $cluster,
@@ -104,21 +104,18 @@ $VMcluster1Count=(Get-Cluster $cluster1 |Get-vm | where {($_.extensiondata.guest
 #
 # Actualizamos las reglas DRS 
 DRSrule -cluster $cluster1 -VMs $VMcluster1 -groupVMName $Cluster1Rule
-#
-#
+
+
 #————————————————————————————————————————————————————————————————————
 # Generamos un correo informativo sobre las VMs que se han incluido en las reglas DRS
 #————————————————————————————————————————————————————————————————————
-# 
+ 
 $VMbody1=$VMcluster1 | select -ExpandProperty name | out-string
 $s1 = "El Virtual Machine DRS Group $Cluster1Rule ubicado en el vSphere Cluster $Cluster1 contiene $VMcluster1Count VM:`n `n"
 $s1 += "$VMbody1`n`n"
 $s1 += "Report date: $date`n`n"
-#
+
 send-mailmessage -to $sendTo -from $sendFrom -Subject "DRS rule report: $VMcluster1Count VMs" -smtpserver $smtp -body $s1
-#
-#————————————————————————————————————————————————————————————————————
-# Generamos un correo informativo sobre las VMs que se han incluido en las reglas DRS
-#————————————————————————————————————————————————————————————————————
+
 
 Disconnect-VIServer $vCenter -Confirm:$False
