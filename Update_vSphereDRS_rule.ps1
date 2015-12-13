@@ -7,6 +7,9 @@
    File Name  : Update_vSphereDRS_rule.ps1 
    Author     : Miquel Mariano - @miquelMariano
    Version    : 3
+
+.USAGE
+	Ejecutar directamente   
       
 .CHANGELOG
    v1	27/02/2015	Creación del script
