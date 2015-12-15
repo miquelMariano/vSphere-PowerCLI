@@ -1,1 +1,0 @@
-WScript.echo "10.45:OK"

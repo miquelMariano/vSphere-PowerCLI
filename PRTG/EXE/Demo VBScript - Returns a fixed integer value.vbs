@@ -1,1 +1,0 @@
-WScript.echo "100:OK"
