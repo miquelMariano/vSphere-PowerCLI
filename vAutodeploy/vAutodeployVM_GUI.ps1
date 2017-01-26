@@ -15,13 +15,14 @@
    v2	22/04/2015	Añadir al script la modificación de recursos VLAN, IP, CPU y MemGB
    v2.1	30/04/2015	Añadir variable $Is_template para desplegar VM a partir de un Template o Clon
    v3	01/06/2015	Añadir GUI
-   v4	26/01/2017	Add default vars definition
+   v4	26/01/2017	Add default vars definition | Add control version from github
     
 #>
 
 #-------------DEFAULT VARS--------------------
 $currentversion = 4
 $currentbuild = 42601
+$FileCurrentversion = "$env:userprofile\currentversion"
 #-------------DEFAULT VARS--------------------
 
 
@@ -477,8 +478,11 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
     $main_form.KeyPreview = $true
 #    $main_form.Add_KeyDown({if ($_.KeyCode -eq "Escape") {$main_form.Close()}})
 
-	Invoke-WebRequest -Uri https://raw.githubusercontent.com/miquelMariano/vSphere-PowerCLI/master/vAutodeploy/currentversion -OutFile c:\tmp\currentversion
-	$githubversion = Get-Content -path "c:\tmp\currentversion"
+	Invoke-WebRequest -Uri https://raw.githubusercontent.com/miquelMariano/vSphere-PowerCLI/master/vAutodeploy/currentversion -OutFile $FileCurrentversion
+	$githubversion = Get-Content -path $FileCurrentversion
+	If (Test-Path $FileCurrentversion){
+		Remove-Item $FileCurrentversion
+		}
 
     $LabelControlVersion = New-Object System.Windows.Forms.Label
     $LabelControlVersion.Location = New-Object System.Drawing.Point(10, 520)
