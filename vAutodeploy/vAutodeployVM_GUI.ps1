@@ -942,7 +942,7 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
     $outputTextBox.ScrollBars = "Vertical" 
 	$outputTextBox.ScrollToCaret()
 	$now = Get-Date -format "dd-MM-yy HH:mm | "
-    $outputTextBox.text = "`r`n$now vAutoDeploy v3.0 by Ncora" + $outputTextBox.text
+    $outputTextBox.text = "`r`n$now vAutoDeploy v$currentversion build $currentbuild by Ncora" + $outputTextBox.text
 	$outputTextBox.text = "`r`n$now Introduce los datos de conexion para empezar..." + $outputTextBox.text
     $groupBox4.Controls.Add($outputTextBox) #Member of groupBox4
 
