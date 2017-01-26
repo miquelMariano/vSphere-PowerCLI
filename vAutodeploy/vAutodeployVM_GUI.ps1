@@ -480,9 +480,6 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
 
 	Invoke-WebRequest -Uri https://raw.githubusercontent.com/miquelMariano/vSphere-PowerCLI/master/vAutodeploy/currentversion -OutFile $FileCurrentversion
 	$githubversion = Get-Content -path $FileCurrentversion
-	If (Test-Path $FileCurrentversion){
-		Remove-Item $FileCurrentversion
-		}
 
     $LabelControlVersion = New-Object System.Windows.Forms.Label
     $LabelControlVersion.Location = New-Object System.Drawing.Point(10, 520)
@@ -495,6 +492,10 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
 		$LabelControlVersion.Text = "Build $githubversion available on GitHub!! -->"
 		}
     $main_form.Controls.Add($LabelControlVersion)
+	
+	If (Test-Path $FileCurrentversion){
+		Remove-Item $FileCurrentversion
+		}
 	
 	$LinkLabel = New-Object System.Windows.Forms.LinkLabel
 	$LinkLabel.Location = New-Object System.Drawing.Size(700,520)
