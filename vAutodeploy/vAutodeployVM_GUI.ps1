@@ -493,9 +493,9 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
 		}
     $main_form.Controls.Add($LabelControlVersion)
 	
-	If (Test-Path $FileCurrentversion){
-		Remove-Item $FileCurrentversion
-		}
+#	If (Test-Path $FileCurrentversion){
+#		Remove-Item $FileCurrentversion
+#		}
 	
 	$LinkLabel = New-Object System.Windows.Forms.LinkLabel
 	$LinkLabel.Location = New-Object System.Drawing.Size(700,520)
