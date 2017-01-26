@@ -3,9 +3,9 @@
    vAutodeployVM_GUI.ps1 es un script que nos ayuda a automatizar desplieques de VMs 
  
 .NOTES 
-   File Name  : vAutodeployVM.ps1 
-   Author     : Miquel Mariano - @miquelMariano
-   Version    : 3
+   File Name  : vAutodeployVM_GUI.ps1 
+   Author     : Miquel Mariano | miquelMariano.github.io | @miquelMariano
+   Version    : 4
    
 .USAGE
   Ejecutar directamente vAutodeployVM_GUI.ps1
@@ -21,7 +21,7 @@
 
 #-------------DEFAULT VARS--------------------
 $currentversion = 4
-$currentbuild = 2601
+$currentbuild = 42601
 #-------------DEFAULT VARS--------------------
 
 
@@ -52,7 +52,7 @@ function connectServer{
 	
 	$main_form.ControlBox = $false
 
-    $now = Get-Date -format "dd-MMM-yyyy HH:mm | "
+    $now = Get-Date -format "dd-MM-yy HH:mm | "
     $outputTextBox.text = "`r`n$now Conectado correctamente a $($TextBoxIPorFQDN.Text)" + $outputTextBox.text
 	$outputTextBox.text = "`r`n$now Rellana los campos iniciales y que base vamos a tomar para el despliegue" + $outputTextBox.text
 	
@@ -60,7 +60,7 @@ function connectServer{
 
     catch {
 	
-    $now = Get-Date -format "dd-MMM-yyyy HH:mm | "
+    $now = Get-Date -format "dd-MM-yy HH:mm | "
     $outputTextBox.text = "`r`n$now Something went wrong!!" + $outputTextBox.text
     
     }
@@ -100,7 +100,7 @@ function disconnectServer{
 	
 	$main_form.ControlBox = $true
     
-    $now = Get-Date -format "dd-MMM-yyyy HH:mm | "
+    $now = Get-Date -format "dd-MM-yy HH:mm | "
     $outputTextBox.text = "`r`n$now Desconectado correctamente de $($TextBoxIPorFQDN.Text)" + $outputTextBox.text
     $outputTextBox.text | Out-File c:\tmp\vAutodeployVM-debug.log
     }
@@ -118,7 +118,7 @@ $DropDownBoxTemplates.Items.Clear()
 
 if ($RadioButtonTemplate.Checked -eq $true) {
 $templates = Get-Template | sort-object name
-$now = Get-Date -format "dd-MMM-yyyy HH:mm | "
+$now = Get-Date -format "dd-MM-yy HH:mm | "
 $outputTextBox.text = "`r`n$now Cargadas plantillas" + $outputTextBox.text
 foreach ($template in $templates) {
             $DropDownBoxTemplates.Items.Add($template.Name) #Add templates to DropDown List
@@ -126,7 +126,7 @@ foreach ($template in $templates) {
 		}
 if ($RadioButtonVM.Checked -eq $true) {
 $vms = get-vm | sort-object name
-$now = Get-Date -format "dd-MMM-yyyy HH:mm | "
+$now = Get-Date -format "dd-MM-yy HH:mm | "
 $outputTextBox.text = "`r`n$now Cargadas VMs" + $outputTextBox.text
 foreach ($vm in $vms) {
             $DropDownBoxTemplates.Items.Add($vm.Name) #Add templates to DropDown List
@@ -146,7 +146,7 @@ function ButtonValidateTemplateVMAction{
     try {
 	
 	if ($DropDownBoxTemplates.SelectedItem -eq $null){
-	$now = Get-Date -format "dd-MMM-yyyy HH:mm | "
+	$now = Get-Date -format "dd-MM-yy HH:mm | "
     $outputTextBox.text = "`r`n$now Selecciona primero una opcion del desplegable de plantillas o VMs" + $outputTextBox.text
 	} else {
 	$DropDownBoxCustomSpec.Enabled=$true
@@ -156,7 +156,7 @@ function ButtonValidateTemplateVMAction{
 	$DropDownBoxCustomSpec.Items.Clear()
 	
 	$OSCustomizationSpec = Get-OSCustomizationSpec | sort-object name
-	$now = Get-Date -format "dd-MMM-yyyy HH:mm | "
+	$now = Get-Date -format "dd-MM-yy HH:mm | "
 	$outputTextBox.text = "`r`n$now Seleccionada $($DropDownBoxTemplates.SelectedItem.ToString())" + $outputTextBox.text
 	$outputTextBox.text = "`r`n$now Cargadas Custom Specifications" + $outputTextBox.text
 	
@@ -178,7 +178,7 @@ function ButtonValidateCustomSpecsAction {
  try {
 	
 	if ($DropDownBoxCustomSpec.SelectedItem -eq $null){
-	$now = Get-Date -format "dd-MMM-yyyy HH:mm | "
+	$now = Get-Date -format "dd-MM-yy HH:mm | "
     $outputTextBox.text = "`r`n$now Selecciona primero una opcion del desplegable CustomSpec" + $outputTextBox.text
 	} else {
 	$DropDownBoxCluster.Enabled=$true
@@ -188,7 +188,7 @@ function ButtonValidateCustomSpecsAction {
 	$DropDownBoxCluster.Items.Clear()
 	
 	$clusters = Get-cluster | sort-object name
-	$now = Get-Date -format "dd-MMM-yyyy HH:mm | "
+	$now = Get-Date -format "dd-MM-yy HH:mm | "
 	$outputTextBox.text = "`r`n$now Seleccionada CustomSpec $($DropDownBoxCustomSpec.SelectedItem.ToString())" + $outputTextBox.text
 	$outputTextBox.text = "`r`n$now Cargada lista de clusters" + $outputTextBox.text
 	 
@@ -212,7 +212,7 @@ function ButtonValidateClusterAction {
  try {
 	
 	if ($DropDownBoxCluster.SelectedItem -eq $null){
-	$now = Get-Date -format "dd-MMM-yyyy HH:mm | "
+	$now = Get-Date -format "dd-MM-yy HH:mm | "
     $outputTextBox.text = "`r`n$now Selecciona primero una opcion del desplegable Cluster" + $outputTextBox.text
 	} else {
 	$DropDownBoxDatastore.Enabled=$true
@@ -222,7 +222,7 @@ function ButtonValidateClusterAction {
 	$DropDownBoxDatastore.Items.Clear()
 	
 	$datastores = get-cluster $DropDownBoxCluster.SelectedItem.ToString() | Get-datastore | sort-object name
-	$now = Get-Date -format "dd-MMM-yyyy HH:mm | "
+	$now = Get-Date -format "dd-MM-yy HH:mm | "
 	$outputTextBox.text = "`r`n$now Seleccionado cluster $($DropDownBoxCluster.SelectedItem.ToString())" + $outputTextBox.text
 	$outputTextBox.text = "`r`n$now Cargada lista de datastores" + $outputTextBox.text
 		
@@ -243,7 +243,7 @@ function ButtonValidateDatastoreAction {
  try {
 	
 	if ($DropDownBoxCluster.SelectedItem -eq $null){
-	$now = Get-Date -format "dd-MMM-yyyy HH:mm | "
+	$now = Get-Date -format "dd-MM-yy HH:mm | "
     $outputTextBox.text = "`r`n$now Selecciona primero una opcion del desplegable Datastore" + $outputTextBox.text
 	} else {
 	$DropDownBoxVLAN.Enabled=$true
@@ -254,8 +254,8 @@ function ButtonValidateDatastoreAction {
 	
 
 ##	$VirtualPortGroups = get-cluster $DropDownBoxCluster.SelectedItem.ToString() | get-vmhost | Get-VirtualPortGroup -name vlan* | select name
-    $VirtualPortGroups = get-cluster $DropDownBoxCluster.SelectedItem.ToString() | get-vmhost | Get-VirtualPortGroup | select name
-	$now = Get-Date -format "dd-MMM-yyyy HH:mm | "
+    $VirtualPortGroups = get-cluster $DropDownBoxCluster.SelectedItem.ToString() | get-vmhost | Get-VirtualPortGroup | select name | sort-object name
+	$now = Get-Date -format "dd-MM-yy HH:mm | "
 	$outputTextBox.text = "`r`n$now Seleccionado datastore $($DropDownBoxDatastore.SelectedItem.ToString())" + $outputTextBox.text
 	$outputTextBox.text = "`r`n$now Cargada lista de port groups del cluster $($DropDownBoxCluster.SelectedItem.ToString())" + $outputTextBox.text
 		
@@ -274,7 +274,7 @@ function ButtonValidateDatastoreAction {
 function ButtonValidateVLANAction {
 
 if ($DropDownBoxVLAN.SelectedItem -eq $null){
-	$now = Get-Date -format "dd-MMM-yyyy HH:mm | "
+	$now = Get-Date -format "dd-MM-yy HH:mm | "
     $outputTextBox.text = "`r`n$now Selecciona primero una opcion del desplegable VLAN" + $outputTextBox.text
 	} else {
 $TextBoxNetwork.Enabled = $true
@@ -282,7 +282,7 @@ $TextBoxNetwork.Enabled = $true
 $DropDownBoxVLAN.Enabled = $false
 $ButtonValidateVLAN.Enabled = $false
 
-$now = Get-Date -format "dd-MMM-yyyy HH:mm | "
+$now = Get-Date -format "dd-MM-yy HH:mm | "
 $outputTextBox.text = "`r`n$now Seleccionado port group $($DropDownBoxVLAN.SelectedItem.ToString())" + $outputTextBox.text
 
 $TextBoxFirstIP.Enabled = $true
@@ -296,7 +296,7 @@ $TextBoxGW.Enabled = $true
 $TextBoxDNS1.Enabled = $true
 $TextBoxDNS2.Enabled = $true
 
-$now = Get-Date -format "dd-MMM-yyyy HH:mm | "
+$now = Get-Date -format "dd-MM-yy HH:mm | "
 $outputTextBox.text = "`r`n$now Selecciona una mascara, puerta de enlace y DNSs correctos para la VLAN -> $($DropDownBoxVLAN.SelectedItem.ToString())" + $outputTextBox.text
 
 
@@ -305,7 +305,7 @@ $outputTextBox.text = "`r`n$now Selecciona una mascara, puerta de enlace y DNSs 
 
 function ButtonValidateNetworkAction {
 if ($TextBoxNetwork.Text -eq $null){
-	$now = Get-Date -format "dd-MMM-yyyy HH:mm | "
+	$now = Get-Date -format "dd-MM-yy HH:mm | "
     $outputTextBox.text = "`r`n$now Intruduce una red valida para calcula las IPs (xxx.xxx.xxx.)" + $outputTextBox.text
 	} else {
 $TextBoxNetwork.Enabled = $false
@@ -330,14 +330,14 @@ $TextBoxGW.Enabled = $true
 $TextBoxDNS1.Enabled = $true
 $TextBoxDNS2.Enabled = $true
 
-$now = Get-Date -format "dd-MMM-yyyy HH:mm | "
+$now = Get-Date -format "dd-MM-yy HH:mm | "
 $outputTextBox.text = "`r`n$now Selecciona una mascara, puerta de enlace y DNSs correctos para la VLAN -> $($DropDownBoxVLAN.SelectedItem.ToString())" + $outputTextBox.text
 
 $ButtonValidateFirstIP.Enabled = $false
 }
 
 function ButtonValidateALLAction {
-$now = Get-Date -format "dd-MMM-yyyy HH:mm | "
+$now = Get-Date -format "dd-MM-yy HH:mm | "
 $outputTextBox.text = "`r`n$now Verificados todos los parametros, listo para empezar con el despliegue" + $outputTextBox.text
 
 $TextBoxNumVMs.Enabled = $false
@@ -397,7 +397,7 @@ $TextBoxFirstIP.Enabled = $true
 
 function ButtonYESAction{
 $PopUpValidateAll.Close()
-$now = Get-Date -format "dd-MMM-yyyy HH:mm | "
+$now = Get-Date -format "dd-MM-yy HH:mm | "
 $outputTextBox.text = "`r`n$now Empezando con el despliegue de VMs..." + $outputTextBox.text
 $ButtonValidateAll.Enabled = $false
 deployVMs
@@ -421,7 +421,7 @@ for ($n=1;$n -le $NumVMs; $n++) {
 #$vmname = $TextBoxBaseName.Text+$NumVMAutoincremental+"V"
 $vmname = $TextBoxBaseName.Text+$NumVMAutoincremental
 
-$now = Get-Date -format "dd-MMM-yyyy HH:mm | "
+$now = Get-Date -format "dd-MM-yy HH:mm | "
 $outputTextBox.text = "`r`n$now Desplegando $n de $($NumVMs) servers" + $outputTextBox.text
 
 
@@ -450,18 +450,12 @@ $NumVMAutoincremental++
 #configuramos la customización para que la IP sea asignada mediante asistente
 Get-OSCustomizationSpec $DropDownBoxCustomSpec.SelectedItem.ToString() | Get-OSCustomizationNicMapping | Set-OSCustomizationNicMapping -IpMode PromptUser -SubnetMask $TextBoxMask.Text -DefaultGateway $TextBoxGW.Text -DNS $TextBoxDNS1.Text,$TextBoxDNS2.Text
 
-$now = Get-Date -format "dd-MMM-yyyy HH:mm | "
+$now = Get-Date -format "dd-MM-yy HH:mm | "
 $outputTextBox.text = "`r`n$now Despliegue finalizado" + $outputTextBox.text
 
 }
 
 #-------------DECLARACION DE FUNCIONES--------------------
-
-#set-executionpolicy Unrestricted -Force
-#if(-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
-#{
-#   Add-PSSnapin VMware.VimAutomation.Core 
-#}
 
 #Verificamos si tenemos instalado PowerCLI
 if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
@@ -477,11 +471,35 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
     
     $main_form = New-Object System.Windows.Forms.Form 
     $main_form.Text = "vAutoDeploy Virtual Machines BETA v$currentversion build $currentbuild" #Form Title
-    $main_form.Size = New-Object System.Drawing.Size(765,560) 
+    $main_form.Size = New-Object System.Drawing.Size(765,580) 
     $main_form.StartPosition = "CenterScreen"
 	    
     $main_form.KeyPreview = $true
 #    $main_form.Add_KeyDown({if ($_.KeyCode -eq "Escape") {$main_form.Close()}})
+
+	Invoke-WebRequest -Uri https://raw.githubusercontent.com/miquelMariano/vSphere-PowerCLI/master/vAutodeploy/currentversion -OutFile c:\tmp\currentversion
+	$githubversion = Get-Content -path "c:\tmp\currentversion"
+
+    $LabelControlVersion = New-Object System.Windows.Forms.Label
+    $LabelControlVersion.Location = New-Object System.Drawing.Point(10, 520)
+    $LabelControlVersion.Size = New-Object System.Drawing.Size(300, 220)
+	$LabelControlVersion.ForeColor = "red"
+    If ($githubversion -eq $currentbuild) {
+		$LabelControlVersion.Text = ""
+		} 
+    Else {
+		$LabelControlVersion.Text = "Build $githubversion available on GitHub!! -->"
+		}
+    $main_form.Controls.Add($LabelControlVersion)
+	
+	$LinkLabel = New-Object System.Windows.Forms.LinkLabel
+	$LinkLabel.Location = New-Object System.Drawing.Size(700,520)
+	$LinkLabel.Size = New-Object System.Drawing.Size(150,20)
+	$LinkLabel.LinkColor = "BLUE"
+	$LinkLabel.ActiveLinkColor = "RED"
+	$LinkLabel.Text = "GitHub"
+	$LinkLabel.add_Click({[system.Diagnostics.Process]::start("https://github.com/miquelMariano/vSphere-PowerCLI/tree/master/vAutodeploy")})
+	$main_form.Controls.Add($LinkLabel)
 
 #-------------DEFINICIÓN PRINCIPAL DEL FORMULARIO--------------------
 
@@ -918,7 +936,7 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
     $outputTextBox.ReadOnly = $True
     $outputTextBox.ScrollBars = "Vertical" 
 	$outputTextBox.ScrollToCaret()
-	$now = Get-Date -format "dd-MMM-yyyy HH:mm | "
+	$now = Get-Date -format "dd-MM-yy HH:mm | "
     $outputTextBox.text = "`r`n$now vAutoDeploy v3.0 by Ncora" + $outputTextBox.text
 	$outputTextBox.text = "`r`n$now Introduce los datos de conexion para empezar..." + $outputTextBox.text
     $groupBox4.Controls.Add($outputTextBox) #Member of groupBox4
