@@ -15,8 +15,15 @@
    v2	22/04/2015	Añadir al script la modificación de recursos VLAN, IP, CPU y MemGB
    v2.1	30/04/2015	Añadir variable $Is_template para desplegar VM a partir de un Template o Clon
    v3	01/06/2015	Añadir GUI
+   v4	26/01/2017	Add default vars definition
     
 #>
+
+#-------------DEFAULT VARS--------------------
+$currentversion = 4
+$currentbuild = 2601
+#-------------DEFAULT VARS--------------------
+
 
 
 #-------------DECLARACION DE FUNCIONES--------------------
@@ -469,7 +476,7 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
 #-------------DEFINICIÓN PRINCIPAL DEL FORMULARIO--------------------
     
     $main_form = New-Object System.Windows.Forms.Form 
-    $main_form.Text = "vAutoDeploy Virtual Machines v.3 BETA" #Form Title
+    $main_form.Text = "vAutoDeploy Virtual Machines BETA v$currentversion build $currentbuild" #Form Title
     $main_form.Size = New-Object System.Drawing.Size(765,560) 
     $main_form.StartPosition = "CenterScreen"
 	    
@@ -526,7 +533,7 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
     $GroupBoxConnection.Controls.Add($LabelIPorFQDN)
 	
 	$TextBoxIPorFQDN = New-Object System.Windows.Forms.TextBox 
-	$TextBoxIPorFQDN.Text = "vcenter.logitravelzone.local"
+	$TextBoxIPorFQDN.Text = "vcenter.ncora.corp"
     $TextBoxIPorFQDN.Location = New-Object System.Drawing.Size(10,40) #Left, Top, Right, Bottom
     $TextBoxIPorFQDN.Size = New-Object System.Drawing.Size(165,20) 
     $GroupBoxConnection.Controls.Add($TextBoxIPorFQDN)
@@ -538,7 +545,7 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
     $GroupBoxConnection.Controls.Add($LabelUser)
 	
 	$TextBoxUsername = New-Object System.Windows.Forms.TextBox 
-	$TextBoxUsername.Text = "toolfactory\miquel.mariano"
+	$TextBoxUsername.Text = "ncora\username"
     $TextBoxUsername.Location = New-Object System.Drawing.Size(10,90)
     $TextBoxUsername.Size = New-Object System.Drawing.Size(165,20) 
     $GroupBoxConnection.Controls.Add($TextBoxUsername)
@@ -601,7 +608,7 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
     $groupBox2.Controls.Add($LabelBaseName) #Member of GroupBox2
 	
 	$TextBoxBaseName = New-Object System.Windows.Forms.TextBox 
-	$TextBoxBaseName.Text = "DemoPC"
+	$TextBoxBaseName.Text = "vAutodeployVM"
     $TextBoxBaseName.Location = New-Object System.Drawing.Size(170,45)
     $TextBoxBaseName.Size = New-Object System.Drawing.Size(185,20) 
 	$TextBoxBaseName.Enabled = $false
