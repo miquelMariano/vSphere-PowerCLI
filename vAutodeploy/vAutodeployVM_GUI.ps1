@@ -1,33 +1,39 @@
 <# 
 .DESCRIPTION
-   vAutodeployVM_GUI.ps1 es un script que nos ayuda a automatizar desplieques de VMs 
+   vAutodeployVM_GUI.ps1 is an script that help to admins. to deploy automatically many virtual machines easyly
  
 .NOTES 
    File Name  : vAutodeployVM_GUI.ps1 
    Author     : Miquel Mariano | miquelMariano.github.io | @miquelMariano
    Version    : 4
+
+.REQUIREMENTS
+   VMWare PowerCLI 5.5 or latest is required
    
 .USAGE
-  Ejecutar directamente vAutodeployVM_GUI.ps1
+  Execute vAutodeployVM_GUI.ps1 from Vmware PowerCLI shell
  
 .CHANGELOG
-   v1	27/03/2015	Creación del script
-   v2	22/04/2015	Añadir al script la modificación de recursos VLAN, IP, CPU y MemGB
-   v2.1	30/04/2015	Añadir variable $Is_template para desplegar VM a partir de un Template o Clon
-   v3	01/06/2015	Añadir GUI
+   v1	27/03/2015	Script creation
+   v2	22/04/2015	Add modifications on VLAN, IP, CPU & MemGB resources
+   v2.1	30/04/2015	Add $Is_template variable to deploy VM from temblate or cloned from another VM
+   v3	01/06/2015	Add GUI
    v4	26/01/2017	Add default vars definition | Add control version from github
+   v4	27/01/2017	Translate script to english | Part1
+   v4	30/01/2017	Modify default value of vars.
+   v4	01/02/2017	Send deployment log with telegram
     
 #>
 
 #-------------DEFAULT VARS--------------------
 $currentversion = 4
-$currentbuild = 42601
+$currentbuild = 40102
 $FileCurrentversion = "$env:userprofile\currentversion"
 #-------------DEFAULT VARS--------------------
 
 
 
-#-------------DECLARACION DE FUNCIONES--------------------
+#-------------DECLARATION OF FUNCTIONS--------------------
 
 function connectServer{
 
@@ -104,9 +110,15 @@ function disconnectServer{
     $now = Get-Date -format "dd-MM-yy HH:mm | "
     $outputTextBox.text = "`r`n$now Desconectado correctamente de $($TextBoxIPorFQDN.Text)" + $outputTextBox.text
     $outputTextBox.text | Out-File c:\tmp\vAutodeployVM-debug.log
-    }
-
-    catch {
+    
+	#Send deployment log with telegram
+	$bot_token = "304017237:AAHpKXZBaw_wOF3H-ryhWl3F3wqIVP_Zqf8" 
+    $uri = "https://api.telegram.org/bot$bot_token/sendMessage" 
+    $chat_id = "6343788" 
+    Invoke-WebRequest -Method Post -Uri $uri -ContentType "application/json;charset=utf-8" ` -Body (ConvertTo-Json -Compress -InputObject @{chat_id=$chat_id; text=$outputTextBox.text})
+	#Send deployment log with telegram
+	
+	} catch {
     
     $outputTextBox.text = "`r`n$now Something went wrong!!" + $outputTextBox.text
     
@@ -429,7 +441,7 @@ $outputTextBox.text = "`r`n$now Desplegando $n de $($NumVMs) servers" + $outputT
 $ip = $TextBoxNetwork.Text+$FirstIP
 write-host Desplegando $vmname con IP $ip de $NumVMs servers -foregroundcolor green
 
-#asignamos una ip estatica a la customización
+#Add an static IP of custom spec.
 Get-OSCustomizationSpec $DropDownBoxCustomSpec.SelectedItem.ToString() | Get-OSCustomizationNicMapping | Set-OSCustomizationNicMapping -IpMode UseStaticIp -IpAddress $ip -SubnetMask $TextBoxMask.Text -DefaultGateway $TextBoxGW.Text -DNS $TextBoxDNS1.Text,$TextBoxDNS2.Text
 
 if ($RadioButtonTemplate.Checked -eq $true){
@@ -448,7 +460,7 @@ $NumVMAutoincremental++
 
 }
 
-#configuramos la customización para que la IP sea asignada mediante asistente
+#Config custom spec. to that IP can be assigned across assistant
 Get-OSCustomizationSpec $DropDownBoxCustomSpec.SelectedItem.ToString() | Get-OSCustomizationNicMapping | Set-OSCustomizationNicMapping -IpMode PromptUser -SubnetMask $TextBoxMask.Text -DefaultGateway $TextBoxGW.Text -DNS $TextBoxDNS1.Text,$TextBoxDNS2.Text
 
 $now = Get-Date -format "dd-MM-yy HH:mm | "
@@ -456,7 +468,7 @@ $outputTextBox.text = "`r`n$now Despliegue finalizado" + $outputTextBox.text
 
 }
 
-#-------------DECLARACION DE FUNCIONES--------------------
+#-------------DECLARATION OF FUNCTIONS--------------------
 
 #Verificamos si tenemos instalado PowerCLI
 if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
@@ -511,7 +523,7 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
 #-------------POPUP VALIDACIÓN--------------------
     
     $PopUpValidateAll = New-Object System.Windows.Forms.Form 
-    $PopUpValidateAll.Text = "Validacion" #Form Title
+    $PopUpValidateAll.Text = "Validation" #Form Title
     $PopUpValidateAll.Size = New-Object System.Drawing.Size(400,340) 
     $PopUpValidateAll.StartPosition = "CenterScreen"
 	$PopUpValidateAll.ControlBox = $false
@@ -546,7 +558,7 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
 	$GroupBoxConnection = New-Object System.Windows.Forms.GroupBox
     $GroupBoxConnection.Location = New-Object System.Drawing.Size(10,5) 
     $GroupBoxConnection.size = New-Object System.Drawing.Size(185,200) #Ancho, Alto
-    $GroupBoxConnection.text = "Datos de conexion con vCenter" 
+    $GroupBoxConnection.text = "vCenter connection" 
     $main_form.Controls.Add($GroupBoxConnection) 
 
 	$LabelIPorFQDN = New-Object System.Windows.Forms.Label
@@ -564,7 +576,7 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
     $LabelUser = New-Object System.Windows.Forms.Label
     $LabelUser.Location = New-Object System.Drawing.Point(10, 70)
     $LabelUser.Size = New-Object System.Drawing.Size(120, 14)
-    $LabelUser.Text = "Usuario:"
+    $LabelUser.Text = "Username:"
     $GroupBoxConnection.Controls.Add($LabelUser)
 	
 	$TextBoxUsername = New-Object System.Windows.Forms.TextBox 
@@ -587,14 +599,14 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
 	
 	$ButtonConnect = New-Object System.Windows.Forms.Button
     $ButtonConnect.add_click({connectServer})
-    $ButtonConnect.Text = "Conectar"
+    $ButtonConnect.Text = "Connect"
     $ButtonConnect.Top=170
     $ButtonConnect.Left=10
     $GroupBoxConnection.Controls.Add($ButtonConnect) 
 
     $ButtonDisconnect = New-Object System.Windows.Forms.Button
     $ButtonDisconnect.add_click({disconnectServer})
-    $ButtonDisconnect.Text = "Desconectar"
+    $ButtonDisconnect.Text = "Disconnect"
     $ButtonDisconnect.Top=170
     $ButtonDisconnect.Left=100
     $ButtonDisconnect.Enabled = $false #Disabled by default
@@ -608,13 +620,13 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
 	$groupBox2 = New-Object System.Windows.Forms.GroupBox
     $groupBox2.Location = New-Object System.Drawing.Size(10,215) 
     $groupBox2.size = New-Object System.Drawing.Size(730,300) #Width, Heigth
-    $groupBox2.text = "Definicion de variables" 
+    $groupBox2.text = "Variables" 
     $main_form.Controls.Add($groupBox2) 
 	
 	$LabelNumVMs = New-Object System.Windows.Forms.Label
     $LabelNumVMs.Location = New-Object System.Drawing.Point(10, 20)
     $LabelNumVMs.Size = New-Object System.Drawing.Size(120, 20)
-    $LabelNumVMs.Text = "Numero de VMs:"
+    $LabelNumVMs.Text = "Number of VMs:"
     $groupBox2.Controls.Add($LabelNumVMs) #Member of GroupBox2
 	
 	$TextBoxNumVMs = New-Object System.Windows.Forms.TextBox 
@@ -627,7 +639,7 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
 	$LabelBaseName = New-Object System.Windows.Forms.Label
     $LabelBaseName.Location = New-Object System.Drawing.Point(10, 45)
     $LabelBaseName.Size = New-Object System.Drawing.Size(120, 20)
-    $LabelBaseName.Text = "Nombre base:"
+    $LabelBaseName.Text = "Basename:"
     $groupBox2.Controls.Add($LabelBaseName) #Member of GroupBox2
 	
 	$TextBoxBaseName = New-Object System.Windows.Forms.TextBox 
@@ -640,7 +652,7 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
 	$LabelVMIncrementalNum = New-Object System.Windows.Forms.Label
     $LabelVMIncrementalNum.Location = New-Object System.Drawing.Point(10, 70)
     $LabelVMIncrementalNum.Size = New-Object System.Drawing.Size(160, 20)
-    $LabelVMIncrementalNum.Text = "Primer valor autoincremental:"
+    $LabelVMIncrementalNum.Text = "First sufix value:"
     $groupBox2.Controls.Add($LabelVMIncrementalNum) #Member of GroupBox2
 	
 	$TextBoxVMIncrementelNum = New-Object System.Windows.Forms.TextBox 
@@ -655,7 +667,7 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
 #   $RadioButtonTemplate.Location = new-object System.Drawing.Point(10,95) #location of the radio button(px) in relation to the group box's edges (length, height)
 	$RadioButtonTemplate.size = New-Object System.Drawing.Size(70,20) #the size in px of the radio button (length, height)
 #	$RadioButtonTemplate.Checked = $true #is checked by default
-	$RadioButtonTemplate.Text = "Plantilla" #labeling the radio button
+	$RadioButtonTemplate.Text = "Template" #labeling the radio button
 	$RadioButtonTemplate.Add_Click({RadioButtonTemplateVMAction})
 	$RadioButtonTemplate.Enabled=$false
 	$groupBox2.Controls.Add($RadioButtonTemplate) #activate the inside the grou
@@ -766,7 +778,7 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
 #    $LabelNumCPU.Location = New-Object System.Drawing.Point(10, 195)
     $LabelNumCPU.Location = New-Object System.Drawing.Point(10, 95)
     $LabelNumCPU.Size = New-Object System.Drawing.Size(120, 20)
-    $LabelNumCPU.Text = "Numero de CPUs:"
+    $LabelNumCPU.Text = "CPUs:"
     $groupBox2.Controls.Add($LabelNumCPU) #Member of GroupBox2
 	
 	$TextBoxNumCPU = New-Object System.Windows.Forms.TextBox 
@@ -817,11 +829,11 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
 	$LabelNetwork = New-Object System.Windows.Forms.Label
     $LabelNetwork.Location = New-Object System.Drawing.Point(395,45)
     $LabelNetwork.Size = New-Object System.Drawing.Size(100, 20)
-    $LabelNetwork.Text = "Red:"
+    $LabelNetwork.Text = "Network:"
     $groupBox2.Controls.Add($LabelNetwork) #Member of GroupBox2
 		
 	$TextBoxNetwork = New-Object System.Windows.Forms.TextBox 
-	$TextBoxNetwork.Text = "172.28.10."
+	$TextBoxNetwork.Text = "10.0.0."
     $TextBoxNetwork.Location = New-Object System.Drawing.Size(500,45)
     $TextBoxNetwork.Size = New-Object System.Drawing.Size(185,20) 
 	$TextBoxNetwork.Enabled = $false
@@ -838,11 +850,11 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
 	$LabelFirstIP = New-Object System.Windows.Forms.Label
     $LabelFirstIP.Location = New-Object System.Drawing.Point(395,70)
     $LabelFirstIP.Size = New-Object System.Drawing.Size(100, 20)
-    $LabelFirstIP.Text = "Primera IP:"
+    $LabelFirstIP.Text = "First IP:"
     $groupBox2.Controls.Add($LabelFirstIP) #Member of GroupBox2
 	
 	$TextBoxFirstIP = New-Object System.Windows.Forms.TextBox
-    $TextBoxFirstIP.Text = "12"
+    $TextBoxFirstIP.Text = "100"
     $TextBoxFirstIP.Location = New-Object System.Drawing.Size(500,70) 
     $TextBoxFirstIP.Size = New-Object System.Drawing.Size(185,20) 
     $TextBoxFirstIP.Enabled=$false
@@ -859,7 +871,7 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
 	$LabelMask = New-Object System.Windows.Forms.Label
     $LabelMask.Location = New-Object System.Drawing.Point(395,95)
     $LabelMask.Size = New-Object System.Drawing.Size(100, 20)
-    $LabelMask.Text = "Mascara:"
+    $LabelMask.Text = "Netmask:"
     $groupBox2.Controls.Add($LabelMask) #Member of GroupBox2
 	
 	$TextBoxMask = New-Object System.Windows.Forms.TextBox 
@@ -872,7 +884,7 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
 	$LabelGW = New-Object System.Windows.Forms.Label
     $LabelGW.Location = New-Object System.Drawing.Point(395,120)
     $LabelGW.Size = New-Object System.Drawing.Size(100, 20)
-    $LabelGW.Text = "Puerta de enlace:"
+    $LabelGW.Text = "Gateway:"
     $groupBox2.Controls.Add($LabelGW) #Member of GroupBox2
 	
 	$TextBoxGW = New-Object System.Windows.Forms.TextBox 
@@ -885,11 +897,11 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
 	$LabelDNS1 = New-Object System.Windows.Forms.Label
     $LabelDNS1.Location = New-Object System.Drawing.Point(395,145)
     $LabelDNS1.Size = New-Object System.Drawing.Size(100, 20)
-    $LabelDNS1.Text = "DNS primario:"
+    $LabelDNS1.Text = "Primary DNS:"
     $groupBox2.Controls.Add($LabelDNS1) #Member of GroupBox2
 	
 	$TextBoxDNS1 = New-Object System.Windows.Forms.TextBox 
-	$TextBoxDNS1.Text = "172.29.106.124"
+	$TextBoxDNS1.Text = "8.8.8.8"
     $TextBoxDNS1.Location = New-Object System.Drawing.Size(500,145)
     $TextBoxDNS1.Size = New-Object System.Drawing.Size(185,20) 
 	$TextBoxDNS1.Enabled = $false
@@ -898,11 +910,11 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
 	$LabelDNS2 = New-Object System.Windows.Forms.Label
     $LabelDNS2.Location = New-Object System.Drawing.Point(395,170)
     $LabelDNS2.Size = New-Object System.Drawing.Size(100, 20)
-    $LabelDNS2.Text = "DNS secundario:"
+    $LabelDNS2.Text = "Secondary DNS:"
     $groupBox2.Controls.Add($LabelDNS2) #Member of GroupBox2
 	
 	$TextBoxDNS2 = New-Object System.Windows.Forms.TextBox 
-	$TextBoxDNS2.Text = "172.29.106.126"
+	$TextBoxDNS2.Text = "4.4.4.4"
     $TextBoxDNS2.Location = New-Object System.Drawing.Size(500,170)
     $TextBoxDNS2.Size = New-Object System.Drawing.Size(185,20) 
 	$TextBoxDNS2.Enabled = $false
@@ -911,7 +923,7 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
 	$ButtonValidateAll = New-Object System.Windows.Forms.button
     $ButtonValidateAll.add_click({ButtonValidateALLAction})
 	$ButtonValidateAll.Size = New-Object System.Drawing.Size(600,40) 
-    $ButtonValidateAll.Text = "Validar despliegue"
+    $ButtonValidateAll.Text = "Validate deploy"
     $ButtonValidateAll.Location = New-Object System.Drawing.Size(10,245)
     $ButtonValidateAll.Enabled = $false #Disabled by default
     $groupBox2.Controls.Add($ButtonValidateAll) #Member of GroupBoxConnection
@@ -942,7 +954,7 @@ if (-not (Get-PSSnapin VMware.VimAutomation.Core -ErrorAction SilentlyContinue))
     $outputTextBox.ScrollBars = "Vertical" 
 	$outputTextBox.ScrollToCaret()
 	$now = Get-Date -format "dd-MM-yy HH:mm | "
-    $outputTextBox.text = "`r`n$now vAutoDeploy v$currentversion build $currentbuild by Ncora" + $outputTextBox.text
+    $outputTextBox.text = "`r`n$now vAutoDeploy v$currentversion build $currentbuild by miquelMariano.github.io" + $outputTextBox.text
 	$outputTextBox.text = "`r`n$now Introduce los datos de conexion para empezar..." + $outputTextBox.text
     $groupBox4.Controls.Add($outputTextBox) #Member of groupBox4
 
