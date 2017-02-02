@@ -21,13 +21,13 @@
    v4	26/01/2017	Add default vars definition | Add control version from github
    v4	27/01/2017	Translate script to english | Part1
    v4	30/01/2017	Modify default value of vars.
-   v4	01/02/2017	Send deployment log with telegram
+   v4	02/02/2017	Send deployment log with telegram
     
 #>
 
 #-------------DEFAULT VARS--------------------
 $currentversion = 4
-$currentbuild = 40102
+$currentbuild = 40202
 $FileCurrentversion = "$env:userprofile\currentversion"
 #-------------DEFAULT VARS--------------------
 
@@ -439,7 +439,7 @@ $outputTextBox.text = "`r`n$now Desplegando $n de $($NumVMs) servers" + $outputT
 
 
 $ip = $TextBoxNetwork.Text+$FirstIP
-write-host Desplegando $vmname con IP $ip de $NumVMs servers -foregroundcolor green
+write-host Deploying $vmname with IP $ip of $NumVMs servers -foregroundcolor green
 
 #Add an static IP of custom spec.
 Get-OSCustomizationSpec $DropDownBoxCustomSpec.SelectedItem.ToString() | Get-OSCustomizationNicMapping | Set-OSCustomizationNicMapping -IpMode UseStaticIp -IpAddress $ip -SubnetMask $TextBoxMask.Text -DefaultGateway $TextBoxGW.Text -DNS $TextBoxDNS1.Text,$TextBoxDNS2.Text
