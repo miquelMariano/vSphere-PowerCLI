@@ -1,4 +1,3 @@
-
 #Recreates the settings saved by Get-SourceSettings.ps1 in the new vCenter
 #Get the DRSRule Module from https://github.com/PowerCLIGoodies/DRSRule
 #Requires -modules DRSRule
@@ -301,5 +300,3 @@ if (!($VMs -or $folders -or $permissions -or $roles -or $drs))
 {
         echo "Please use one or more of the -VMs, -Folders, -Permissions, -DRS or -Roles switches to do something"
 }
-```
-
