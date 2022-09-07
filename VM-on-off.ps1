@@ -1,6 +1,6 @@
 # 
 .DESCRIPTION
-   PowerOFF / PowerON vCenter virtual machines
+   Start / stop virtual machines
 
 .NOTES 
    File Name  : VM-on-off.ps1 
