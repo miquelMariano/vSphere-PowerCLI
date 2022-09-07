@@ -1,19 +1,17 @@
-# 
+<# 
 .DESCRIPTION
    Start / stop virtual machines
 
 .NOTES 
-   File Name  : VM-on-off.ps1 
+   File Name  : start-stop-vm.ps1 
    Author     : Miquel Mariano - @miquelMariano | https://miquelmariano.github.io
    Version    : 1
 
-.USAGE
-   .\VM-on-off.ps1 -vCenter "vcenter.lab.local" -vCenteruser "MyUsername" -vm "VM1"  -status "on|off" 
-   
-.CHANGELOG
    v1 07/09/2022  Script creation
-#>
 
+.EXAMPLE
+   .\start-stop-vm.ps1 -vCenter "vcenter.lab.local" -vCenteruser "MyUsername" -vm "VM1"  -status "on|off" 
+#>
 
 #--------------GLOBAL VARS----------------------
 
